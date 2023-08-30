@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.2)
-project(test)
-include(./cmake/toolchain-arm-none-arm-eabi-gcc.cmake)
+set(CMAKE_TOOLCHAIN_FILE cmake/toolchain-arm-none-eabi-gcc.cmake)
+project(test LANGUAGES CXX C ASM)
+
 find_package(libopencm3_stm32f4 REQUIRED)
 
-enable_language(C CXX ASM)
+
+
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 set(CMAKE_CXX_EXTENSIONS ON)
 
 
@@ -54,3 +56,5 @@ target_link_options(hello_world PRIVATE
     -lstdc++
     -Wl,--end-group
     -Wl,--print-memory-usage)
+
+stm32_add_linker_script(hello_world PRIVATE cortex-m-generic.ld)
