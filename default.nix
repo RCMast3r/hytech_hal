@@ -6,4 +6,8 @@ stdenv.mkDerivation rec {
   src = ./.;
   nativeBuildInputs = [ cmake gcc-arm-embedded ];
   propagatedBuildInputs = [ libopencm3_stm32f4 ];
+  # dontPatch = true;
+  # dontFixup = true;
+  # dontStrip = true;
+  # dontPatchELF = true;
 }
