@@ -25,7 +25,14 @@
         rec {
           hytech_hal = pkgs.hytech_hal;
           default = hytech_hal;
+         defaultApp = pkgs.writeShellApplication {
+          name = "flash-stlink";
+          text = "st-flash --reset write ${pkgs.hytech_hal}/bin/hello_world.elf 0x08000000";
+          runtimeInputs = [ pkgs.stlink ];
         };
+        };
+
+       
 
         devShells.x86_64-linux.default = 
         pkgs.mkShell rec {
