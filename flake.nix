@@ -27,8 +27,13 @@
           default = hytech_hal;
          defaultApp = pkgs.writeShellApplication {
           name = "flash-stlink";
-          text = "st-flash --reset write ${pkgs.hytech_hal}/bin/hello_world.elf 0x08000000";
+          text = "st-flash --reset write ${pkgs.hytech_hal}/bin/hello_world.bin 0x08000000";
           runtimeInputs = [ pkgs.stlink ];
+        };
+        dfu = pkgs.writeShellApplication {
+          name = "flash-dfu";
+          text = "dfu-util -a 0 -D ${pkgs.hytech_hal}/bin/hello_world.bin -s 0x08000000";
+          runtimeInputs = [ pkgs.dfu-util ];
         };
         };
 
@@ -38,11 +43,12 @@
         pkgs.mkShell rec {
             # Update the name to something that suites your project.
             name = "nix-devshell";
-
             packages = with pkgs; [
               # Development Tools
               gcc-arm-embedded
               cmake
+              libopencm3_stm32f4
+              dfu-util
             ];
 
             # Setting up the environment variables you need during

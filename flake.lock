@@ -26,11 +26,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1693427027,
-        "narHash": "sha256-gdrXHNW1BUMHUVlsWsyYr5rE2D+s4cNlENsNN0i1oy8=",
+        "lastModified": 1693428627,
+        "narHash": "sha256-9o5STBP6JKA3H1tdX8l18Munqzd8/wmboT+EXwWl6o8=",
         "owner": "RCMast3r",
         "repo": "libopencm3_cmake",
-        "rev": "6c1e246f1a79d4adb3b4b2a620365fe1c8776d0d",
+        "rev": "758de103790a52e7b3b676c85b75698a98ee6935",
         "type": "github"
       },
       "original": {
@@ -73,11 +73,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1693341273,
-        "narHash": "sha256-wrsPjsIx2767909MPGhSIOmkpGELM9eufqLQOPxmZQg=",
+        "lastModified": 1693771906,
+        "narHash": "sha256-32EnPCaVjOiEERZ+o/2Ir7JH9pkfwJZJ27SKHNvt4yk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2ab91c8d65c00fd22a441c69bbf1bc9b420d5ea1",
+        "rev": "da5adce0ffaff10f6d0fee72a02a5ed9d01b52fc",
         "type": "github"
       },
       "original": {

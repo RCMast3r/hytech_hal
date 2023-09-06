@@ -41,20 +41,32 @@ target_compile_options(hello_world PRIVATE
     $<$<CONFIG:Debug>:-Og -g3 -ggdb>
     $<$<CONFIG:Release>:-Og -g0>)
 
-target_link_options(hello_world PRIVATE
-    ${CPU_PARAMETERS}
-    -Wl,-Map=${CMAKE_PROJECT_NAME}.map
-    $<$<VERSION_GREATER:$<C_COMPILER_VERSION>,10.3.1>:-Wl,--no-warn-rwx-segments>
-    -Wl,--start-group
-    -lc
-    -lm
-    -lstdc++
-    -Wl,--end-group
-    -Wl,--print-memory-usage)
+# target_link_options(hello_world PRIVATE
+#     ${CPU_PARAMETERS}
+#     -Wl,-Map=${CMAKE_PROJECT_NAME}.map
+#     $<$<VERSION_GREATER:$<C_COMPILER_VERSION>,10.3.1>:-Wl,--no-warn-rwx-segments>
+#     -Wl,--start-group
+#     -lc
+#     -lm
+#     -lstdc++
+#     -Wl,--end-group
+#     -Wl,--print-memory-usage)
+
 
 stm32_add_linker_script(hello_world PRIVATE cortex-m-generic.ld)
 
+add_custom_target(hello_world.bin ALL DEPENDS hello_world)
+add_custom_command(
+    TARGET hello_world.bin
+    POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${CMAKE_CURRENT_BINARY_DIR}/hello_world.elf ${CMAKE_CURRENT_BINARY_DIR}/hello_world.bin
+)
 include(GNUInstallDirs)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hello_world.elf
         DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+include(GNUInstallDirs)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hello_world.bin
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
