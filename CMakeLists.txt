@@ -42,8 +42,6 @@ target_compile_options(hello_world PRIVATE
     $<$<CONFIG:Release>:-Og -g0>)
 
 # target_link_options(hello_world PRIVATE
-#     ${CPU_PARAMETERS}
-#     -Wl,-Map=${CMAKE_PROJECT_NAME}.map
 #     $<$<VERSION_GREATER:$<C_COMPILER_VERSION>,10.3.1>:-Wl,--no-warn-rwx-segments>
 #     -Wl,--start-group
 #     -lc
