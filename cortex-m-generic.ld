@@ -29,8 +29,8 @@
 /* Enforce emmition of the vector table. */
 MEMORY
 {
-  rom (rx) : ORIGIN = 0x08000000, LENGTH = 8K
-  ram (rwx) : ORIGIN = 0x20000000, LENGTH = 2K
+  rom (rx) : ORIGIN = 0x08000000, LENGTH = 500K
+  ram (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
 }
 
 EXTERN (vector_table)
