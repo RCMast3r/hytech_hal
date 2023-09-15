@@ -41,17 +41,22 @@ target_compile_options(hello_world PRIVATE
     $<$<CONFIG:Debug>:-Og -g3 -ggdb>
     $<$<CONFIG:Release>:-Og -g0>)
 
-# target_link_options(hello_world PRIVATE
-#     $<$<VERSION_GREATER:$<C_COMPILER_VERSION>,10.3.1>:-Wl,--no-warn-rwx-segments>
-#     -Wl,--start-group
-#     -lc
+target_link_options(hello_world PRIVATE
+    # $<$<VERSION_GREATER:$<C_COMPILER_VERSION>,10.3.1>:-Wl,--no-warn-rwx-segments>
+    -Wl,--start-group
+    --specs=nosys.specs
+
+    -lc
 #     -lm
-#     -lstdc++
-#     -Wl,--end-group
-#     -Wl,--print-memory-usage)
+    # -nostartfiles
+#     --static
+    -lnosys
+    -lstdc++)
+    # -Wl,--end-group
+    # -Wl,--print-memory-usage)
 
 
-stm32_add_linker_script(hello_world PRIVATE cortex-m-generic.ld)
+stm32_add_linker_script(hello_world PRIVATE STM32F446RETX_RAM.ld)
 
 add_custom_target(hello_world.bin ALL DEPENDS hello_world)
 add_custom_command(

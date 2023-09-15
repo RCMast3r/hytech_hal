@@ -26,6 +26,7 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
+#include <string>
 
 #define LED_DISCO_GREEN_PORT GPIOA
 #define LED_DISCO_GREEN_PIN GPIO3
@@ -40,7 +41,7 @@
 #define FLASH_ACR_ICEN (1 << 9)
 #define FLASH_ACR_LATENCY_2WS 0x02
 
-#define USART_CONSOLE USART2
+#define USART_CONSOLE UART4
 
 const struct rcc_clock_scale rcc_hse_24mhz_3v3{
 	// These are defined in CUBEIDE clock config
@@ -64,7 +65,7 @@ const struct rcc_clock_scale rcc_hse_24mhz_3v3{
 	.apb2_frequency = 84000000,
 };
 
-int _write(int file, char *ptr, int len);
+// int _write(int file, char *ptr, int len);
 
 static void clock_setup(void)
 {
@@ -74,7 +75,7 @@ static void clock_setup(void)
 	rcc_periph_clock_enable(RCC_GPIOA);
 
 	/* Enable clocks for USART2 and dac */
-	rcc_periph_clock_enable(RCC_USART2);
+	rcc_periph_clock_enable(RCC_UART4);
 	rcc_periph_clock_enable(RCC_DAC);
 
 	/* And ADC*/
@@ -87,7 +88,7 @@ static void usart_setup(void)
 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO0);
 
 	/* Setup USART2 TX pin as alternate function. */
-	gpio_set_af(GPIOA, GPIO_AF7, GPIO0);
+	gpio_set_af(GPIOA, GPIO_AF8, GPIO0);
 
 	usart_set_baudrate(USART_CONSOLE, 115200);
 	usart_set_databits(USART_CONSOLE, 8);
@@ -108,44 +109,23 @@ static void usart_setup(void)
  * @param len
  * @return
  */
-int _write(int file, char *ptr, int len)
-{
-	int i;
+// int _write(int file, char *ptr, int len)
+// {
+// 	int i;
 
-	if (file == STDOUT_FILENO || file == STDERR_FILENO) {
-		for (i = 0; i < len; i++) {
-			if (ptr[i] == '\n') {
-				usart_send_blocking(USART_CONSOLE, '\r');
-			}
-			usart_send_blocking(USART_CONSOLE, ptr[i]);
-		}
-		return i;
-	}
-	errno = EIO;
-	return -1;
-}
+// 	if (file == STDOUT_FILENO || file == STDERR_FILENO) {
+// 		for (i = 0; i < len; i++) {
+// 			if (ptr[i] == '\n') {
+// 				usart_send_blocking(USART_CONSOLE, '\r');
+// 			}
+// 			usart_send_blocking(USART_CONSOLE, ptr[i]);
+// 		}
+// 		return i;
+// 	}
+// 	errno = EIO;
+// 	return -1;
+// }
 
-static void adc_setup(void)
-{
-	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
-	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO1);
-
-	adc_power_off(ADC1);
-	adc_disable_scan_mode(ADC1);
-	adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_3CYC);
-
-	adc_power_on(ADC1);
-
-}
-
-static void dac_setup(void)
-{
-	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO5);
-	dac_disable(DAC1, DAC_CHANNEL2);
-	dac_disable_waveform_generation(DAC1, DAC_CHANNEL2);
-	dac_enable(DAC1, DAC_CHANNEL2);
-	dac_set_trigger_source(DAC1, DAC_CR_TSEL2_SW);
-}
 
 static uint16_t read_adc_naiive(uint8_t channel)
 {
@@ -164,15 +144,26 @@ int main(void)
 	int j = 0;
 	clock_setup();
 	usart_setup();
-	printf("hi guys!\n");
+	// printf("hi guys!\n");
 
 	/* green led for ticking */
 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 			LED_DISCO_GREEN_PIN);
 
+	std::string hello = "Hello";
+
 	while (1) {
 
-		printf("hi guys!\n");
+		// printf("hi guys!\n");
+
+		// for(int i = 0; i < len(hello); i++) {
+		// 	usart_send_blocking(hello[i]);
+		// }
+		// for (char ch: hello)
+		// {
+		// 	usart_send_blocking(USART_CONSOLE, ch);	
+		// }
+		
 
 		/* LED on/off */
 		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
