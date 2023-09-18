@@ -18,6 +18,7 @@ extern "C" {
 
 class stm32f4_hh : public hytech_hal
 {
+    // initialize the clocks
     void init_chip() override;
     void init_usart() override;
     void init_can() override;

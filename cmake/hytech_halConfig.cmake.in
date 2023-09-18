@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/hytech_halTargets.cmake")
+
+check_required_components(hytech_hal)

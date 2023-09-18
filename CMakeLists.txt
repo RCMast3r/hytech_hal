@@ -7,19 +7,17 @@ find_package(libopencm3_stm32f4 REQUIRED)
 add_library(hytech_hal INTERFACE)
 
 target_include_directories(hytech_hal 
-  PUBLIC
+  INTERFACE 
   $<INSTALL_INTERFACE:include/hytech_hal>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/hytech_hal>
   )
+# add_library(stm32f4 PUBLIC )
 
-add_library(stm32f4 PUBLIC)
-
-target_include_directories(stm32f4 
-  PUBLIC
-  $<INSTALL_INTERFACE:include/stm32f4>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/stm32f4>
-  )
-
+# target_include_directories(stm32f4 
+#   PUBLIC
+#   $<INSTALL_INTERFACE:include/stm32f4>
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/stm32f4>
+#   )
 
 # hytech_hal interface library 
 # (the only thing that a user code library should include essentially) 
@@ -37,14 +35,20 @@ install(EXPORT hytech_halTargets
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hytech_hal
 )
 
-
-
-
-
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/hytech_halConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/hytech_halConfig.cmake"
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hytech_hal
+)
+install(FILES
+          "${CMAKE_CURRENT_BINARY_DIR}/hytech_halConfig.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hytech_hal
+)
 
 # install all of the headers for the libraries
 install(
-    DIRECTORY include
-    FILES_MATCHING PATTERN ".h" 
-    DESTINATION include)
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+    FILES_MATCHING PATTERN "*.h" 
+    )
 
