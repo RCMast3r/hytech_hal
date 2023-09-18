@@ -28,6 +28,10 @@ Add the following to ~/.config/nix/nix.conf or /etc/nix/nix.conf:
 
 1. interface library for user libs to leverage implementations of the hytech_hal =
 2. implementations of the hytech_hal library for each chip
+3. the cmake toolchain(s) to be used in each library and application impl
+
+TODO:
+- a seperate repo / cmake package needs to be made that will include macros for creating a standard cmake package for hytech.  
 
 ## general flow
 a user library uses the interface library (for say creating a driver for a screen) where as a user "application" implementation (where the `int main()` lives) will implement / use the individual implementations of the hytech_hal and pass it a pointer to it. (PIMPL pattern) https://en.cppreference.com/w/cpp/language/pimpl
