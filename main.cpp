@@ -21,12 +21,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <libopencm3/cm3/nvic.h>
-#include <libopencm3/stm32/adc.h>
-#include <libopencm3/stm32/dac.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/usart.h>
-#include <string>
+#include <libopencm3/stm32/timer.h>
 
 #define LED_DISCO_GREEN_PORT GPIOA
 #define LED_DISCO_GREEN_PIN GPIO3
@@ -40,8 +37,6 @@
 #define FLASH_ACR_DCEN (1 << 10)
 #define FLASH_ACR_ICEN (1 << 9)
 #define FLASH_ACR_LATENCY_2WS 0x02
-
-#define USART_CONSOLE UART4
 
 const struct rcc_clock_scale rcc_hse_24mhz_3v3{
 	// These are defined in CUBEIDE clock config
@@ -65,7 +60,63 @@ const struct rcc_clock_scale rcc_hse_24mhz_3v3{
 	.apb2_frequency = 84000000,
 };
 
-// int _write(int file, char *ptr, int len);
+// Defines for neopixel timer
+typedef union
+{
+  struct
+  {
+    uint8_t w;
+    uint8_t b;
+    uint8_t r;
+    uint8_t g;
+  } color;
+  uint32_t data;
+} PixelRGBW_t;
+
+#define NEOPIXEL_0		25
+#define NEOPIXEL_1		51
+#define NUM_PIXELS		3
+#define DMA_BUF_SIZE	(NUM_PIXELS * 32) + 1
+
+#define NEOPIXEL_PORT	GPIOA
+#define NEOPIXEL_PIN	GPIO2
+
+static void GPIO_setup(void) {
+
+	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
+				LED_DISCO_GREEN_PIN);
+
+	
+
+}
+
+static void timer_setup(void) {
+
+	rcc_periph_clock_enable(RCC_TIM2);
+	rcc_periph_clock_enable(RCC_GPIOA);
+
+	// Sets gpio output to PWM Push-Pull configuration, not sure about 50MHZ
+	gpio_set_output_options(NEOPIXEL_PORT, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, NEOPIXEL_PIN);
+
+	rcc_periph_clock_enable(RCC_TIM2);
+	// Sets timer mode with clock division ratio, timer alignemnt (center or edge), and count direction
+	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_CENTER_1,
+				TIM_CR1_DIR_UP);
+	// Sets timer output compare mode with OC id and OC mode, it is set to pwm
+	timer_set_oc_mode(TIM2, TIM_OC1, TIM_OCM_PWM1);
+	// Enables output compare
+	timer_enable_oc_output(TIM2, TIM_OC1);
+	// enables output in break (idk man, something about timer overflow)
+	timer_enable_break_main_output(TIM2);
+	// sets some random ass value, I have no clue what this means
+	timer_set_oc_value(TIM2, TIM_OC1, 25);
+	// Sets timer period
+	timer_set_period(TIM2, 100);
+	// enable counter
+	timer_enable_counter(TIM2);
+	// I have no clue how the above code sets channel unless it is automatic based on GPIO
+
+}
 
 static void clock_setup(void)
 {
@@ -82,75 +133,14 @@ static void clock_setup(void)
 	rcc_periph_clock_enable(RCC_ADC1);
 }
 
-static void usart_setup(void)
-{
-	/* Setup GPIO pins for USART2 transmit. */
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO0);
-
-	/* Setup USART2 TX pin as alternate function. */
-	gpio_set_af(GPIOA, GPIO_AF8, GPIO0);
-
-	usart_set_baudrate(USART_CONSOLE, 115200);
-	usart_set_databits(USART_CONSOLE, 8);
-	usart_set_stopbits(USART_CONSOLE, USART_STOPBITS_1);
-	usart_set_mode(USART_CONSOLE, USART_MODE_TX);
-	usart_set_parity(USART_CONSOLE, USART_PARITY_NONE);
-	usart_set_flow_control(USART_CONSOLE, USART_FLOWCONTROL_NONE);
-
-	/* Finally enable the USART. */
-	usart_enable(USART_CONSOLE);
-}
-
-/**
- * Use USART_CONSOLE as a console.
- * This is a syscall for newlib
- * @param file
- * @param ptr
- * @param len
- * @return
- */
-// int _write(int file, char *ptr, int len)
-// {
-// 	int i;
-
-// 	if (file == STDOUT_FILENO || file == STDERR_FILENO) {
-// 		for (i = 0; i < len; i++) {
-// 			if (ptr[i] == '\n') {
-// 				usart_send_blocking(USART_CONSOLE, '\r');
-// 			}
-// 			usart_send_blocking(USART_CONSOLE, ptr[i]);
-// 		}
-// 		return i;
-// 	}
-// 	errno = EIO;
-// 	return -1;
-// }
-
-
-static uint16_t read_adc_naiive(uint8_t channel)
-{
-	uint8_t channel_array[16];
-	channel_array[0] = channel;
-	adc_set_regular_sequence(ADC1, 1, channel_array);
-	adc_start_conversion_regular(ADC1);
-	while (!adc_eoc(ADC1));
-	uint16_t reg16 = adc_read_regular(ADC1);
-	return reg16;
-}
-
 int main(void)
 {
 	int i;
 	int j = 0;
 	clock_setup();
-	usart_setup();
-	// printf("hi guys!\n");
+	timer_setup();
 
-	/* green led for ticking */
-	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-			LED_DISCO_GREEN_PIN);
-
-	std::string hello = "Hello";
+	/* green led for ticking */	
 
 	while (1) {
 
