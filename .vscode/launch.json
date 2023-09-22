@@ -1,0 +1,18 @@
+  {
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "gdbPath": "/nix/store/0izdfh3zxrj68mbwbhzqycb1g3darad6-gcc-arm-embedded-12.2.rel1/bin/arm-none-eabi-gdb",
+            "armToolchainPath": "/nix/store/0izdfh3zxrj68mbwbhzqycb1g3darad6-gcc-arm-embedded-12.2.rel1/bin",
+            "request": "launch",
+            "servertype": "external",
+            "cwd": "${workspaceRoot}",
+            "executable": "build/hello_world.elf",
+            "name": "Debug",
+            "gdbTarget": "localhost:4242",
+            "device": "STM32F446RE",
+            "showDevDebugOutput": "raw",
+        }
+    ]
+}

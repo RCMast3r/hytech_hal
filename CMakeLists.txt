@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.2)
 set(CMAKE_TOOLCHAIN_FILE cmake/toolchain-arm-none-eabi-gcc.cmake)
 project(test LANGUAGES CXX C ASM)
 
+# set(CMAKE_BUILD_TYPE Debug)
+
 find_package(libopencm3_stm32f4 REQUIRED)
 
 set(CMAKE_C_STANDARD 11)
@@ -31,6 +33,7 @@ target_compile_options(hello_world PRIVATE
     -Wformat=2 -Wformat-truncation
     -Wundef
     -fno-common
+    -fno-exceptions
     -Wno-unused-parameter
     $<$<COMPILE_LANGUAGE:CXX>:
         -Wconversion
@@ -44,10 +47,8 @@ target_compile_options(hello_world PRIVATE
 target_link_options(hello_world PRIVATE
     # $<$<VERSION_GREATER:$<C_COMPILER_VERSION>,10.3.1>:-Wl,--no-warn-rwx-segments>
     -Wl,--start-group
-    -nostdlib
-    --static
-    -lgcc
-    # -lstdc++)
+    # --static
+    -lstdc++
     -Wl,--end-group
     -Wl,--print-memory-usage)
 
