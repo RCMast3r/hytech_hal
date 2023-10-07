@@ -10,6 +10,7 @@ extern "C" {
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/f4/rcc.h>
+#include <libopencm3/stm32/f4/flash.h>
 #ifdef __cplusplus
 }
 #endif
@@ -20,6 +21,7 @@ class stm32f4_hh : public hytech_hal
 {
     // initialize the clocks
     void init_chip() override;
-    void init_usart() override;
+    // void init_usart() override;
     void init_can() override;
+    void hytech_print(std::string &out) override;
 };
